@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Citizen Report App</title>
+  <script src="cordova.js"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body, html { height:100%; font-family: Arial, sans-serif; }
+
+    /* Top navigation */
+    .top-nav {
+        width: 100%;
+        text-align: right;
+        padding: 15px 30px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 10;
+    }
+
+    .top-nav a {
+        text-decoration: none;
+        color: #fff;
+        font-weight: bold;
+        font-size: 16px;
+        margin-left: 15px;
+        background: rgba(0,0,0,0.3);
+        padding: 6px 12px;
+        border-radius: 5px;
+        transition: background 0.3s;
+    }
+
+    .top-nav a:hover { background: rgba(0,0,0,0.6); }
+
+    /* Slider */
+    .slider { position: relative; width: 100%; height: 100vh; overflow: hidden; }
+    .slide {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+    }
+    .slide.active { opacity: 1; }
+
+    /* Top Yellow Header */
+    .main-header {
+        position: absolute;
+        top: 120px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #FFD700; /* yellow */
+        font-weight: bold;
+        text-align: center;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.9);
+        font-size: clamp(32px, 6vw, 60px);
+        z-index: 10;
+    }
+
+    /* Description below header */
+    .description {
+        position: absolute;
+        top: 250px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        text-align: center;
+        max-width: 60%;
+        font-size: clamp(16px, 2vw, 22px);
+        line-height: 1.6;
+        text-shadow: 2px 2px 6px rgba(0,0,0,0.9); /* strong shadow for contrast */
+        z-index: 10;
+        font-weight: bolder;
+    }
+
+    @media (max-width: 768px) {
+        .description { top: 200px; width: 90%; font-size: clamp(14px, 2.5vw, 18px); }
+        .top-nav a { font-size: 14px; padding: 4px 10px; }
+            .main-header { top: 100px; font-size: clamp(24px, 5vw, 40px); }
+    }
+
+    @media (max-width: 480px) {
+      .description { top: 160px; width: 95%; font-size: clamp(12px, 3vw, 16px); }
+        .top-nav a { font-size: 12px; padding: 3px 8px; }
+           .main-header { top: 80px; font-size: clamp(20px, 6vw, 32px); }
+    }
+
+
+  
+  </style>
+</head>
+<body>
+
+  <!-- Top navigation -->
+  <div class="top-nav">
+    <a href="signup.html">Sign Up</a>
+ <a href="Loginpage.html">login</a>
+
+  </div>
+
+  <!-- Top Header -->
+  <div class="main-header">Incident Tracker Report</div>
+
+  <!-- Description -->
+  <div class="description">
+      Submit incidents such as accidents, fights, or riots and stay informed about your community. 
+      Your reports help the community respond quickly and safely. <br><br>
+      How to register: Click "Sign Up" at the top-right, fill in your details, and start reporting incidents safely.
+  </div>
+
+  <!-- Slider container -->
+  <div class="slider">
+    <div class="slide active" style="background-image: url('img/im.jpg');"></div>
+    
+
+  <!-- Slider JS -->
+  <script>
+    document.addEventListener('deviceready', () => console.log('Cordova ready'), false);
+
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+
+    function showSlide(index) {
+      slides.forEach((slide, i) => slide.classList.remove('active'));
+      slides[index].classList.add('active');
+    }
+
+    setInterval(() => {
+      currentSlide = (currentSlide + 1) % slides.length;
+      showSlide(currentSlide);
+    }, 5000); // change every 5 seconds
+  </script>
+
+</body>
+</html>

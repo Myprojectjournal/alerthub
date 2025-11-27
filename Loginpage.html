@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Citizen Report App - Login</title>
+  <link rel="stylesheet" href="css/index.css">
+  <script src="cordova.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <div class="top-nav">
+    <a href="signup.html">Sign Up</a>
+  </div>
+
+  <h2>Login</h2>
+  <input type="text" id="loginUsername" placeholder="Email or Username" required><br>
+  <input type="password" id="loginPassword" placeholder="Password" required><br>
+  <button onclick="login()">Login</button> 
+  <button onclick="goBack()" class="back-button">← Back</button>
+
+</div>
+
+<script>
+document.addEventListener('deviceready', () => {
+    console.log("Cordova device ready");
+}, false);
+
+function login() {
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+
+    if(!username || !password){
+        alert("Please fill both fields.");
+        return;
+    }
+
+    fetch('https://reportapp.infinityfree.me/wp-json/jwt-auth/v1/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log("Login Response:", data);
+        if(data.token){
+            localStorage.setItem('jwtToken', data.token);
+            localStorage.setItem('userEmail', data.user_email);
+            localStorage.setItem('userName', data.user_display_name);
+            alert('Login successful!');
+            window.location.href = 'home.html';
+        } else {
+            alert('Login failed: ' + (data.message || "Unknown error"));
+        }
+    })
+    .catch(err => {
+        console.error("Login Error:", err);
+        alert("Error occurred. Check console.");
+    });
+}
+
+function goBack() {
+    window.location.href = "./index.html"; // or "index.html" if that's your login page
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Citizen Report App - Sign Up</title>
+  <link rel="stylesheet" href="css/index.css">
+  <script src="cordova.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <div class="top-nav">
+    <a href="Loginpage.html">login</a>
+  </div>
+
+  <h2>Create Account</h2>
+  <input type="text" id="fullName" placeholder="Full Name" required><br>
+  <input type="text" id="phone" placeholder="Phone Number" required><br>
+  <input type="text" id="country" placeholder="Country" required><br>
+  <input type="text" id="address" placeholder="Address" required><br>
+  <input type="email" id="email" placeholder="Email" required><br>
+  <input type="password" id="password" placeholder="Password" required><br>
+  <input type="password" id="confirmPassword" placeholder="Confirm Password" required><br>
+  <button onclick="signup()">Sign Up</button>
+</div>
+
+<script>
+document.addEventListener('deviceready', () => {
+    console.log("Cordova device ready");
+}, false);
+
+function signup() {
+    const fullName = document.getElementById("fullName").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const country = document.getElementById("country").value.trim();
+    const address = document.getElementById("address").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+
+    if(!fullName || !phone || !country || !address || !email || !password || !confirmPassword){
+        alert("Please fill all fields.");
+        return;
+    }
+
+    if(password !== confirmPassword){
+        alert("Passwords do not match!");
+        return;
+    }
+
+    const strongPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+    if(!strongPassword.test(password)){
+        alert("Password must be 8+ chars, include uppercase, lowercase, number, special char.");
+        return;
+    }
+
+    fetch("https://reportapp.infinityfree.me/wp-json/custom/v1/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fullName, phone, country, address, email, password })
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log("Sign Up Response:", data);
+        if(data.success){
+            alert(data.message);
+            window.location.href = "./Loginpage.html";
+        } else {
+            alert(data.message || "Sign up failed.");
+        }
+    })
+    .catch(err => {
+        console.error("Sign Up Error:", err);
+        alert("Error occurred. Check console.");
+    });
+}
+</script>
+
+</body>
+</html>
