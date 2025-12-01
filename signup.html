@@ -19,30 +19,9 @@
   <input type="text" id="phone" placeholder="Phone Number" required><br>
   <input type="text" id="country" placeholder="Country" required><br>
   <input type="text" id="address" placeholder="Address" required><br>
-  <label for="password"></label>
-<div style="position: relative;">
-  <input 
-    type="password" 
-    id="passwordInput" 
-    placeholder="Password: least 8 chars, uppercase, lowercase, number, special" 
-    style="padding-right: 35px;"
-  >
-  <span id="togglePassword" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); cursor:pointer;">👁️</span>
-</div>
-<div id="passwordStrengthBar" style="width: 100%; background: #eee; margin-top: 5px; border-radius: 4px; height:8px;"></div>
-
-<label for="confirmPassword" style="margin-top:10px;"></label>
-<div style="position: relative;">
-  <input 
-    type="password" 
-    id="confirmPasswordInput" 
-    placeholder="Re-enter password" 
-    style="padding-right: 35px;"
-  >
-  <span id="toggleConfirmPassword" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); cursor:pointer;">👁️</span>
-</div>
-<span id="passwordMatchMsg" style="display:block; margin-top:5px; font-size:14px;"></span>
-
+  <input type="email" id="email" placeholder="Email" required><br>
+  <input type="password" id="password" placeholder="Password" required><br>
+  <input type="password" id="confirmPassword" placeholder="Confirm Password" required><br>
   <button onclick="signup()">Sign Up</button>
 </div>
 
@@ -97,14 +76,6 @@ function signup() {
     });
 }
 </script>
-<script src="js/passwordStrength.js"></script>
-<script>
-    displayPasswordStrength("passwordInput", "passwordStrengthBar");
-    confirmPasswordMatch("passwordInput", "confirmPasswordInput", "passwordMatchMsg");
-    togglePasswordVisibility("passwordInput", "togglePassword");
-    togglePasswordVisibility("confirmPasswordInput", "toggleConfirmPassword");
-</script>
-
 
 </body>
 </html>
