@@ -1,0 +1,209 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f6fa;
+    width: 100%;
+    overflow-x: hidden; /* prevent horizontal scroll */
+}
+
+/* HEADER */
+header {
+    background: #013e70;
+    color: #fff;
+    padding: 1rem 2vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 999;
+}
+header h1 {
+    margin: 0;
+    font-size: clamp(1.2rem, 4vw, 1.5rem);
+}
+
+/* WRAPPER */
+
+
+.wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 70px;
+    width: 100%; /* full width */
+    padding-left: 2vw;  /* small left padding to keep edge visible */
+    padding-right: 2vw; /* small right padding */
+    box-sizing: border-box;
+}
+
+/* LEFT PANEL */
+.left-panel {
+    background: #013e70;
+    color: #fff;
+    width: 15rem; /* fixed panel width for desktop */
+    height: 100vh;
+    position: fixed;
+    top: 4.5rem;
+    left: 0;
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.left-panel button {
+    width: 80%;
+    margin: 0.5rem 0;
+    padding: 0.8rem 1rem;
+    background: #fff;
+    color: #40739e;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* CONTAINER */
+.container {
+    flex: 1;
+    margin-left: 15rem; /* same as panel width */
+    width: 100%;
+    padding: 1rem 2vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* FILTER */
+.filter-wrapper {
+    width: 100%;
+    max-width: 36rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.filter-wrapper label {
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+}
+.filter-wrapper select {
+    width: 60%;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+
+.incident {
+    width: 100%;       /* full width */
+    max-width: 600px;  /* max for large screens */
+    margin: 0 auto;    /* center for larger screens */
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* Card Image */
+.incident img {
+    width: 100%;                /* fill card width */
+    height: clamp(200px, 30vw, 350px); /* responsive height */
+    object-fit: cover;          /* fill nicely */
+    border-radius: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+/* Card Text */
+.incident h3 {
+    font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+    margin: 0.5rem 0;
+}
+.incident p {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    margin: 0.5rem 0;
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+.incident .location,
+.incident small {
+    font-size: clamp(0.8rem, 1.5vw, 1rem);
+    margin-top: 0.3rem;
+    font-weight: bold;
+}
+.incident .location { color: #27ae60; }
+.incident small { color: #e67e22; }
+
+/* Card Actions */
+.incident-actions {
+    margin-top: 0.5rem;
+    display: flex;
+    gap: 1rem;
+}
+.edit-icon, .delete-icon {
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+.edit-icon:hover { color: #FFA500; }
+.delete-icon:hover { color: red; }
+
+/* MOBILE / TABLET STYLING */
+@media (max-width: 900px) {
+    .incident img {
+        height: clamp(250px, 40vw, 400px);
+    }
+    .incident {
+        padding: 1rem;
+    }
+    .filter-wrapper select {
+        width: 80%;
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        z-index: 200;
+    }
+    .left-panel { display: none; }
+    .container { margin-left: 0; width: 100%; padding: 2vw; align-items: stretch; }
+    .mobile-buttons {
+        position: fixed;
+        top: 0.7rem;
+        right: 0.5rem;
+        display: flex;
+        flex-direction: row;
+        gap: 0.5rem;
+        z-index: 1000;
+    }
+    .mobile-buttons button {
+        background: #fff;
+        color: #40739e;
+        font-weight: bold;
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        border: none;
+        cursor: pointer;
+    }
+    .mobile-buttons button:hover { text-decoration: underline; }
+    .incident { max-width: 100%; padding: 2vw; }
+    .incident h3 { font-size: clamp(1rem, 4vw, 1.2rem); }
+    .incident p { font-size: clamp(0.9rem, 3vw, 1.1rem); }
+    .incident small, .incident .location { font-size: clamp(0.8rem, 2.5vw, 1rem); }
+}
+
+/* Mobile / small screens */
+@media (max-width: 768px) {
+    .wrapper, .container {
+        padding-left: 2vw;   /* small left margin */
+        padding-right: 2vw;  /* small right margin */
+    }
+
+    .incident {
+        width: 100%;
+        margin: 0;           /* flush with container padding */
+        padding: 10px;
+    }
+}
