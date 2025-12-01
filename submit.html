@@ -1,306 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AlertHub - Submit Incident</title>
-    <script src="cordova.js"></script>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AlertHub - Submit Incident</title>
+<script src="cordova.js"></script>
 
-    <style>
-      body,
-      html {
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-        background: #f5f6fa;
-      }
-      header {
-        background: #40739e;
-        color: #fff;
-        padding: 15px 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      header h1 {
-        margin: 0;
-        font-size: clamp(20px, 4vw, 28px);
-      }
-      header button {
-        background: #ffd700;
-        border: none;
-        padding: 8px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: bold;
-      }
-      .container {
-        padding: 20px;
-        max-width: 600px;
-        margin: 0 auto;
-      }
-      input[type="text"],
-      textarea,
-      select,
-      input[type="file"] {
-        width: 100%;
-        padding: 10px;
-        margin: 8px 0;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        box-sizing: border-box;
-      }
-      textarea {
-        resize: vertical;
-        height: 100px;
-      }
-      button.submitBtn {
-        width: 100%;
-        padding: 12px;
-        margin-top: 15px;
-        background: #40739e;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        font-size: 16px;
-        cursor: pointer;
-      }
-      button.submitBtn:hover {
-        background: #2f3640;
-      }
-      /* Make container scrollable on small screens */
-      .container {
-        padding-bottom: 100px; /* extra space for keyboard */
-      }
+<style>
+body, html { margin:0; padding:0; font-family: Arial, sans-serif; background: #f5f6fa; }
+header { background:#40739e; color:#fff; padding:15px 20px; display:flex; justify-content:space-between; align-items:center; }
+header h1 { margin:0; font-size:clamp(20px, 4vw, 28px); }
+header button { background:#ffd700; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:bold; }
+.container { padding:20px; max-width:600px; margin:0 auto; padding-bottom:100px; }
+input[type="text"], textarea, select, input[type="file"] { width:100%; padding:10px; margin:8px 0; border-radius:5px; border:1px solid #ccc; box-sizing:border-box; }
+textarea { resize: vertical; height:100px; }
+button.submitBtn { width:100%; padding:12px; margin-top:15px; background:#40739e; color:#fff; border:none; border-radius:5px; font-size:16px; cursor:pointer; }
+button.submitBtn:hover { background:#2f3640; }
+@media (max-width:480px) { input, select, textarea, button.submitBtn { font-size:14px; } button.submitBtn { padding:10px; } }
+</style>
+</head>
+<body>
 
-      /* Mobile responsive adjustments */
-      @media (max-width: 480px) {
-        input,
-        select,
-        textarea,
-        button.submitBtn {
-          font-size: 14px; /* smaller text for mobile */
-        }
+<header>
+<h1>Submit Incident</h1>
+<button onclick="window.location.href='home.html'">Back</button>
+</header>
 
-        button.submitBtn {
-          padding: 10px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <h1>Submit Incident</h1>
-      <button onclick="window.location.href='home.html'">Back</button>
-    </header>
+<div class="container">
+<label>Title</label>
+<input type="text" id="incidentTitle" placeholder="Enter incident title" />
 
-    <div class="container">
-      <label>Title</label>
-      <input
-        type="text"
-        id="incidentTitle"
-        placeholder="Enter incident title"
-      />
+<label>Category</label>
+<select id="incidentCategory">
+<option value="Accident">Accident</option>
+<option value="Fighting">Fighting</option>
+<option value="Rioting">Rioting</option>
+</select>
 
-      <label>Category</label>
-      <select id="incidentCategory">
-        <option value="Accident">Accident</option>
-        <option value="Fighting">Fighting</option>
-        <option value="Rioting">Rioting</option>
-      </select>
+<label>Description</label>
+<textarea id="incidentContent" placeholder="Describe the incident"></textarea>
 
-      <label>Description</label>
-      <textarea
-        id="incidentContent"
-        placeholder="Describe the incident"
-      ></textarea>
+<label>Upload Image</label>
+<input type="file" id="incidentImage" accept="image/*" required />
 
-      <label>Upload Image</label>
-      <input type="file" id="incidentImage" accept="image/*" required />
+<button class="submitBtn">Submit Incident</button>
+</div>
+<script>
 
-      <button class="submitBtn" onclick="submitIncident()">
-        Submit Incident
-      </button>
-    </div>
+document.addEventListener("deviceready", () => {}, false);
 
-    <script>
-      document.addEventListener("deviceready", () => {}, false);
+const token = localStorage.getItem("jwtToken");
+if (!token) window.location.href = "loginpage.html";
 
-      const token = localStorage.getItem("jwtToken");
-      if (!token) {
-        window.location.href = "loginpage.html";
-      }
+const editPostId = localStorage.getItem("editPostId");
 
-      const editPostId = localStorage.getItem("editPostId");
+const submitBtn = document.querySelector(".submitBtn");
+const titleInput = document.getElementById("incidentTitle");
+const contentInput = document.getElementById("incidentContent");
+const categorySelect = document.getElementById("incidentCategory");
+const imageInput = document.getElementById("incidentImage");
+const categoryMap = { Accident: 2, Fighting: 3, Rioting: 4 };
 
-      const submitBtn = document.querySelector(".submitBtn");
-      const titleInput = document.getElementById("incidentTitle");
-      const contentInput = document.getElementById("incidentContent");
-      const categorySelect = document.getElementById("incidentCategory");
-      const imageInput = document.getElementById("incidentImage");
+// Convert image to JPEG
+async function convertToJpeg(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = new Image();
+      img.onload = function() {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width; canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+        canvas.toBlob((blob)=>{
+          resolve(new File([blob], "image.jpg",{type:"image/jpeg"}));
+        }, "image/jpeg", 0.9);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
-      const categoryMap = { Accident: 2, Fighting: 3, Rioting: 4 };
+// If editing, pre-fill form
+if (editPostId) {
+  submitBtn.textContent = "Update Incident";
+  fetch(`https://reportapp.infinityfree.me/wp-json/wp/v2/posts/${editPostId}`, {
+    headers: { Authorization: "Bearer " + token }
+  })
+  .then(res => res.json())
+  .then(post => {
+    titleInput.value = post.title.rendered;
+    contentInput.value = post.content.rendered.replace(/<p><b>Location:<\/b>.*<\/p>/i,'');
+    const catId = post.categories[0];
+    for (const key in categoryMap) {
+      if (categoryMap[key] === catId) categorySelect.value = key;
+    }
+  })
+  .catch(err => console.error(err));
+}
 
-      // ⭐ Convert ANY image format to JPEG before uploading
-      async function convertToJpeg(file) {
-        return new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = function (e) {
-            const img = new Image();
-            img.onload = function () {
-              const canvas = document.createElement("canvas");
-              canvas.width = img.width;
-              canvas.height = img.height;
-              const ctx = canvas.getContext("2d");
-              ctx.drawImage(img, 0, 0);
-              canvas.toBlob(
-                (blob) => {
-                  resolve(
-                    new File([blob], "image.jpg", { type: "image/jpeg" })
-                  );
-                },
-                "image/jpeg",
-                0.9
-              );
-            };
-            img.src = e.target.result;
-          };
-          reader.readAsDataURL(file);
+// Submit / Update
+submitBtn.onclick = async function() {
+  const title = titleInput.value.trim();
+  const content = contentInput.value.trim();
+  const category = categorySelect.value;
+  const imageFile = imageInput.files[0];
+
+  if (!title || !content) { alert("Title and description are required"); return; }
+
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+    const latitude = pos.coords.latitude;
+    const longitude = pos.coords.longitude;
+
+    let imageId = null;
+
+    // Step 1: Upload image if provided
+    if (imageFile) {
+      try {
+        const jpegFile = await convertToJpeg(imageFile);
+        const formData = new FormData();
+        formData.append("file", jpegFile, "image.jpg");
+        formData.append("title", title + " Image");
+
+        const uploadRes = await fetch("https://reportapp.infinityfree.me/wp-json/wp/v2/media", {
+          method: "POST",
+          headers: { Authorization: "Bearer " + token },
+          body: formData
         });
+
+        const uploadData = await uploadRes.json();
+        if (!uploadRes.ok) { console.error(uploadData); alert("Image upload failed"); return; }
+        imageId = uploadData.id;
+      } catch (err) {
+        console.error(err);
+        alert("Error uploading image");
+        return;
       }
+    }
 
-      // If editing, pre-fill form
-      if (editPostId) {
-        submitBtn.textContent = "Update Incident";
-        fetch(
-          `https://reportapp.infinityfree.me/wp-json/wp/v2/posts/${editPostId}`,
-          {
-            headers: { Authorization: "Bearer " + token },
-          }
-        )
-          .then((res) => res.json())
-          .then((post) => {
-            titleInput.value = post.title.rendered;
-            contentInput.value = post.content.rendered;
-            // set category
-            const catId = post.categories[0];
-            for (const key in categoryMap) {
-              if (categoryMap[key] === catId) categorySelect.value = key;
-            }
-          })
-          .catch((err) => console.error(err));
+    // Step 2: Submit or update post
+    const formattedContent = content
+      .split(/\n\s*\n/).map(line => `<p>${line.trim()}</p>`).join('') +
+      `<p><b>Location:</b> ${latitude}, ${longitude}</p>`;
+
+    const postBody = {
+      title: title,
+      content: formattedContent,
+      categories: [categoryMap[category]],
+      status: 'publish'
+    };
+    if (imageId) postBody.featured_media = imageId;
+
+    try {
+      const url = editPostId
+        ? `https://reportapp.infinityfree.me/wp-json/wp/v2/posts/${editPostId}`
+        : "https://reportapp.infinityfree.me/wp-json/wp/v2/posts";
+
+      const res = await fetch(url, {
+        method: editPostId ? "POST" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token
+        },
+        body: JSON.stringify(postBody)
+      });
+
+      const data = await res.json();
+      console.log(data);
+      if (data.id) {
+        alert(editPostId ? "Incident updated!" : "Incident submitted!");
+        localStorage.removeItem("editPostId");
+        window.location.href = "home.html";
+      } else {
+        console.error(data);
+        alert("Failed to submit/update incident");
       }
+    } catch (err) {
+      console.error(err);
+      alert("Error submitting incident");
+    }
 
-      submitBtn.onclick = async function () {
-       const title = titleInput.value.trim();
-const content = contentInput.value.trim();
-
-// Convert textarea line breaks into paragraphs
-const formattedContent = content
-  .split(/\n\s*\n/)       // split text by double line breaks (empty line)
-  .map(line => line.trim())   // remove extra spaces
-  .filter(line => line.length > 0) // ignore empty lines
-  .map(line => `<p>${line}</p>`) // wrap each paragraph in <p>
-  .join(''); // join all paragraphs together
-
-        const category = categorySelect.value;
-        const imageFile = imageInput.files[0];
-
-        if (!title || !content) {
-          alert("Title and description are required");
-          return;
-        }
-
-        if (!imageFile) {
-          alert("You must upload an image");
-          return;
-        }
-
-        navigator.geolocation.getCurrentPosition(
-          async (pos) => {
-            const latitude = pos.coords.latitude;
-            const longitude = pos.coords.longitude;
-
-            let imageId = null;
-
-            if (imageFile) {
-              const jpegFile = await convertToJpeg(imageFile);
-
-              // Upload to WordPress
-              const formData = new FormData();
-              formData.append("file", jpegFile);
-              formData.append("title", title + " Image");
-
-              const uploadRes = await fetch(
-                "https://reportapp.infinityfree.me/wp-json/wp/v2/media",
-                {
-                  method: "POST",
-                  headers: {
-                    Authorization: "Bearer " + token,
-                  },
-                  body: formData,
-                }
-              );
-
-              const uploadData = await uploadRes.json();
-              imageId = uploadData.id; // save media ID
-              console.log("Image uploaded, ID:", imageId);
-            }
-
-           const postBody = {
-    title: title,
-    content: formattedContent + (latitude && longitude ? `<p><b>Location:</b> ${latitude}, ${longitude}</p>` : ''),
-    categories: [categoryMap[category]],
-    status: 'publish'
+  }, (err) => {
+    console.error("Geolocation error", err);
+    alert("Failed to get location");
+  }, { enableHighAccuracy: true });
 };
 
-            if (imageId) postBody.featured_media = imageId;
+</script>
 
-            try {
-              const url = editPostId
-                ? `https://reportapp.infinityfree.me/wp-json/wp/v2/posts/${editPostId}`
-                : "https://reportapp.infinityfree.me/wp-json/wp/v2/posts";
-
-              const res = await fetch(url, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: "Bearer " + token,
-                },
-                body: JSON.stringify(postBody),
-              });
-
-              const data = await res.json();
-              if (data.id) {
-                alert(editPostId ? "Incident updated!" : "Incident submitted!");
-                localStorage.removeItem("editPostId");
-                window.location.href = "home.html";
-              } else {
-                console.error(data);
-                alert("Failed to submit/update incident");
-              }
-            } catch (err) {
-              console.error(err);
-              alert("Error submitting incident");
-            }
-          },
-          (err) => {
-            console.error("Geolocation error", err);
-            alert("Failed to get location");
-          },
-          { enableHighAccuracy: true }
-        );
-      };
-
-      // Scroll container into view when input is focused (mobile fix)
-      const inputs = document.querySelectorAll("input, textarea, select");
-      inputs.forEach((input) => {
-        input.addEventListener("focus", () => {
-          setTimeout(() => {
-            input.scrollIntoView({ behavior: "smooth", block: "center" });
-          }, 300);
-        });
-      });
-    </script>
-  </body>
+</body>
 </html>

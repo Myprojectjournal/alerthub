@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="io.cordova.reportapp" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Citizen Report App</name>
+    <description>Cordova app for reporting incidents</description>
+    <author email="you@example.com" href="https://reportapp.infinityfree.me">
+        Your Name
+    </author>
+
+    <!-- Entry point -->
+    <content src="index.html" />
+
+    <!-- Whitelist plugin -->
+    <plugin name="cordova-plugin-whitelist" spec="1" />
+
+    <!-- Allow your backend domain -->
+    <access origin="https://reportapp.infinityfree.me" />
+    <!-- Allow local files and self -->
+    <access origin="*" />
+
+    <!-- Allow navigation to your backend -->
+    <allow-navigation href="https://reportapp.infinityfree.me/*" />
+
+    <!-- Allow intents (external links) -->
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+</widget>
