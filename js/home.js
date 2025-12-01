@@ -1,0 +1,102 @@
+document.addEventListener("deviceready", () => {}, false);
+
+const token = localStorage.getItem("jwtToken");
+if (!token) window.location.href = "loginpage.html";
+
+// Logout function
+function logout() {
+    localStorage.clear();
+    window.location.href = "loginpage.html";
+}
+
+// Start a fresh incident (new submit)
+function startNewIncident() {
+    localStorage.removeItem("editPostId"); // clear edit flag
+    window.location.href = "submit.html";
+}
+
+// Attach startNewIncident to all Submit / Report Incident buttons
+document.querySelectorAll(".mobile-buttons button, .left-panel button").forEach(btn => {
+    const text = btn.textContent.trim();
+    if (text === "Submit" || text === "Report Incident") {
+        btn.onclick = startNewIncident;
+    }
+});
+
+// Edit incident function
+function editIncident(postId) {
+    localStorage.setItem("editPostId", postId);
+    window.location.href = "submit.html";
+}
+
+// Delete incident function
+function deleteIncident(postId) {
+    if (!confirm("Are you sure you want to delete this incident?")) return;
+    const div = document.getElementById(`incident-${postId}`);
+    if (div) div.remove();
+    alert("Incident deleted!");
+}
+
+// Mapping categories to IDs
+const categoryMap = { Accident: 2, Fighting: 3, Rioting: 4 };
+
+// Load incidents from WordPress
+async function loadIncidents() {
+    try {
+        const category = document.getElementById("category").value;
+
+        const res = await fetch(
+            "https://reportapp.infinityfree.me/wp-json/wp/v2/posts?per_page=50&_embed",
+            { headers: { Authorization: "Bearer " + token } }
+        );
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        const data = await res.json();
+
+        // Filter by category
+        let filtered = category === "all" ? data : data.filter(p => p.categories.includes(categoryMap[category]));
+        filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        const list = document.getElementById("incidentList");
+        list.innerHTML = "";
+
+        filtered.forEach(post => {
+            const img = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url || "";
+
+            // Extract location from content
+            let locationText = '';
+            let description = post.content.rendered;
+            const locationMatch = description.match(/<b>Location:<\/b>\s*([^<\n\r]*)/i);
+            if (locationMatch) {
+                locationText = locationMatch[1].trim();
+                description = description.replace(locationMatch[0], '');
+            }
+            description = description.replace(/<[^>]+>/g, '').trim();
+
+            const div = document.createElement("div");
+            div.className = "incident";
+            div.id = `incident-${post.id}`;
+            div.innerHTML = `
+                <h3>${post.title.rendered}</h3>
+                <p>${description}</p>
+                ${img ? `<img src="${img}">` : ""}
+                ${locationText ? `<span class="location">Location: ${locationText}</span>` : ''}
+                <small>${new Date(post.date).toLocaleString()}</small>
+                <div class="incident-actions">
+                    <span class="edit-icon" onclick="editIncident(${post.id})">✏️</span>
+                    <span class="delete-icon" onclick="deleteIncident(${post.id})">🗑️</span>
+                </div>
+            `;
+            list.appendChild(div);
+        });
+
+    } catch (err) {
+        console.error(err);
+        alert("Failed to load incidents: " + err.message);
+    }
+}
+
+// Filter change listener
+document.getElementById("category").addEventListener("change", loadIncidents);
+
+// Initial load
+loadIncidents();
