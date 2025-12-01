@@ -1,104 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Optional: Content Security Policy for API calls -->
+  <meta http-equiv="Content-Security-Policy" 
+        content="default-src * 'self' data: gap: https://reportapp.infinityfree.me; 
+                 style-src 'self' 'unsafe-inline'; 
+                 script-src 'self' 'unsafe-inline' 'unsafe-eval';">
+
   <title>Citizen Report App</title>
   <script src="cordova.js"></script>
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body, html { height:100%; font-family: Arial, sans-serif; }
+  /* ================================
+   GLOBAL RESET
+================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
 
-    /* Top navigation */
-    .top-nav {
-        width: 100%;
-        text-align: right;
-        padding: 15px 30px;
-        position: absolute;
-        top: 0;
-        right: 0;
-        z-index: 10;
-    }
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+/* Top navigation buttons */
+.top-nav {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 20;
+}
 
-    .top-nav a {
-        text-decoration: none;
-        color: #fff;
-        font-weight: bold;
-        font-size: 16px;
-        margin-left: 15px;
-        background: rgba(0,0,0,0.3);
-        padding: 6px 12px;
-        border-radius: 5px;
-        transition: background 0.3s;
-    }
+.top-nav .nav-btn {
+    display: inline-block;
+    margin-left: 10px;
+    padding: clamp(6px, 1.5vw, 12px) clamp(12px, 3vw, 24px); /* vertical | horizontal */
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: clamp(12px, 2vw, 16px);  /* scales with viewport */
+    color: rgb(248, 244, 244) !important;             /* solid text */
+    background-color: rgb(29, 7, 7) !important;  /* solid background */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    opacity: 1 !important;
+    text-shadow: none !important;
+    transition: all 0.3s ease;
+}
 
-    .top-nav a:hover { background: rgba(0,0,0,0.6); }
+.top-nav .nav-btn:hover {
+    background-color: #290202 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+}
 
-    /* Slider */
-    .slider { position: relative; width: 100%; height: 100vh; overflow: hidden; }
-    .slide {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background-size: cover;
-        background-position: center;
-        opacity: 0;
-        transition: opacity 1s ease-in-out;
-    }
-    .slide.active { opacity: 1; }
 
-    /* Top Yellow Header */
+/* ================================
+   SLIDER (FULL SCREEN BACKGROUND)
+================================ */
+.slider {
+    position: relative;
+    width: 100%;
+    height: 100vh; 
+    overflow: hidden;
+}
+.slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+
+.slide.active {
+    opacity: 1;
+}
+
+/* ================================
+   MAIN HEADER (TITLE TEXT)
+================================ */
+.main-header {
+    position: absolute;
+    top: 22%; 
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    color: #FFD700;
+    font-weight: bold;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.9);
+
+    /* Fully responsive font */
+    font-size: clamp(30px, 6vw, 60px);
+
+    z-index: 10;
+}
+
+/* ================================
+   DESCRIPTION TEXT
+================================ */
+.description {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    color: #ffffff;
+    font-weight: 700;
+    line-height: 1.6;
+
+    /* Scales with screen size */
+    font-size: clamp(14px, 3vw, 22px);
+
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.9);
+    width: 90%;
+    max-width: 800px;
+
+    z-index: 10;
+}
+
+
+
+@media (max-width: 768px) {
     .main-header {
-        position: absolute;
-        top: 120px;
-        left: 50%;
-        transform: translateX(-50%);
-        color: #FFD700; /* yellow */
-        font-weight: bold;
-        text-align: center;
-        text-shadow: 2px 2px 8px rgba(0,0,0,0.9);
-        font-size: clamp(32px, 6vw, 60px);
-        z-index: 10;
+        top: 18%;
     }
 
-    /* Description below header */
     .description {
-        position: absolute;
-        top: 250px;
-        left: 50%;
-        transform: translateX(-50%);
-        color: white;
-        text-align: center;
-        max-width: 60%;
-        font-size: clamp(16px, 2vw, 22px);
-        line-height: 1.6;
-        text-shadow: 2px 2px 6px rgba(0,0,0,0.9); /* strong shadow for contrast */
-        z-index: 10;
-        font-weight: bolder;
+        top: 36%;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-header {
+        top: 15%;
     }
 
-    @media (max-width: 768px) {
-        .description { top: 200px; width: 90%; font-size: clamp(14px, 2.5vw, 18px); }
-        .top-nav a { font-size: 14px; padding: 4px 10px; }
-            .main-header { top: 100px; font-size: clamp(24px, 5vw, 40px); }
+    .description {
+        top: 32%;
     }
 
-    @media (max-width: 480px) {
-      .description { top: 160px; width: 95%; font-size: clamp(12px, 3vw, 16px); }
-        .top-nav a { font-size: 12px; padding: 3px 8px; }
-           .main-header { top: 80px; font-size: clamp(20px, 6vw, 32px); }
-    }
+    
+}
 
-
-  
   </style>
 </head>
 <body>
 
-  <!-- Top navigation -->
-  <div class="top-nav">
-    <a href="signup.html">Sign Up</a>
- <a href="Loginpage.html">login</a>
+<div class="top-nav">
+    <a href="signup.html" class="nav-btn">Sign Up</a>
+    <a href="Loginpage.html" class="nav-btn">Login</a>
+</div>
+
 
   </div>
 
@@ -114,8 +173,8 @@
 
   <!-- Slider container -->
   <div class="slider">
-    <div class="slide active" style="background-image: url('img/im.jpg');"></div>
-    
+    <div class="slide active" style="background-image: url('img/OIP.webp  ');"></div>
+        
 
   <!-- Slider JS -->
   <script>

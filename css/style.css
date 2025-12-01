@@ -28,6 +28,13 @@ header h1 {
 
 /* WRAPPER */
 
+.incident .location {
+    display: block;
+    margin-top: 5px;
+    font-weight: 600;
+    color: #FFD700; /* golden color to stand out on dark backgrounds */
+    font-size: clamp(14px, 2.5vw, 16px);
+}
 
 .wrapper {
     display: flex;

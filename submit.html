@@ -42,9 +42,11 @@ button.submitBtn:hover { background:#2f3640; }
 
 <label>Upload Image</label>
 <input type="file" id="incidentImage" accept="image/*" required />
+<p><b>Your location:</b> <span id="displayLocation">Fetching...</span></p>
 
 <button class="submitBtn">Submit Incident</button>
 </div>
+<script src="cordova.js"></script>
 <script>
 
 document.addEventListener("deviceready", () => {}, false);
@@ -113,6 +115,21 @@ submitBtn.onclick = async function() {
     const latitude = pos.coords.latitude;
     const longitude = pos.coords.longitude;
 
+    // Reverse geocoding to get readable address
+    let userAddress = `${latitude}, ${longitude}`; // fallback
+    const display = document.getElementById("displayLocation");
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+      const data = await res.json();
+      userAddress = data.display_name || userAddress;
+      localStorage.setItem('userAddress', userAddress);
+      if(display) display.textContent = userAddress;
+      console.log("User address:", userAddress);
+    } catch(err) {
+      console.error("Reverse geocoding failed:", err);
+      if(display) display.textContent = "Location not available";
+    }
+
     let imageId = null;
 
     // Step 1: Upload image if provided
@@ -139,10 +156,10 @@ submitBtn.onclick = async function() {
       }
     }
 
-    // Step 2: Submit or update post
+    // Step 2: Submit or update post with readable address
     const formattedContent = content
       .split(/\n\s*\n/).map(line => `<p>${line.trim()}</p>`).join('') +
-      `<p><b>Location:</b> ${latitude}, ${longitude}</p>`;
+      `<p><b>Location:</b> ${userAddress}</p>`;
 
     const postBody = {
       title: title,
@@ -158,7 +175,7 @@ submitBtn.onclick = async function() {
         : "https://reportapp.infinityfree.me/wp-json/wp/v2/posts";
 
       const res = await fetch(url, {
-        method: editPostId ? "POST" : "POST",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token

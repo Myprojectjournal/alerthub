@@ -13,7 +13,7 @@ body {
 /* Container for form */
 .container {
     background-color: #fff;
-    padding: 30px 25px;
+    padding: clamp(20px, 5vw, 30px) clamp(15px, 5vw, 25px);
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     width: 100%;
@@ -25,14 +25,14 @@ body {
 .top-nav {
     width: 100%;
     text-align: right;
-    margin-bottom: 20px;
+    margin-bottom: clamp(15px, 3vw, 20px);
 }
 
 .top-nav a {
     text-decoration: none;
     color: #40739e;
     font-weight: bold;
-    font-size: 14px;
+    font-size: clamp(12px, 3vw, 14px);
 }
 
 .top-nav a:hover {
@@ -42,44 +42,13 @@ body {
 /* Headings */
 h1, h2 {
     color: #2f3640;
-    margin-bottom: 20px;
-    font-size: 24px;
+    margin-bottom: clamp(15px, 3vw, 20px);
+    font-size: clamp(18px, 4vw, 24px);
 }
 
-/* Inputs */
-input[type="text"],
-input[type="password"],
-input[type="email"] {
-    width: 100%;
-    padding: 12px 10px;
-    margin: 8px 0;
-    border: 1px solid #dcdde1;
-    border-radius: 5px;
-    box-sizing: border-box;
-    font-size: 14px;
-}
-
-/* Buttons */
-button {
-    width: 100%;
-    padding: 12px;
-    margin: 15px 0;
-    background-color: #40739e;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background 0.3s;
-}
-
-button:hover {
-    background-color: #2f3640;
-}
-
-/* Links inside paragraphs */
+/* Paragraphs and links */
 p, a {
-    font-size: 14px;
+    font-size: clamp(14px, 3vw, 16px);
     text-align: center;
 }
 
@@ -92,44 +61,55 @@ p a:hover {
     text-decoration: underline;
 }
 
-/* Responsive */
-@media (max-width: 480px) {
-    .container {
-        padding: 20px 15px;
-    }
-    h1, h2 {
-        font-size: 20px;
-    }
+/* Inputs */
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+    width: 100%;
+    padding: clamp(10px, 2.5vw, 12px);
+    margin: clamp(5px, 2vw, 8px) 0;
+    border: 1px solid #dcdde1;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: clamp(14px, 2.5vw, 16px);
 }
 
+/* Buttons */
+button {
+    width: 100%;
+    padding: clamp(10px, 3vw, 12px);
+    margin: clamp(10px, 3vw, 15px) 0;
+    background-color: #40739e;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: clamp(16px, 3vw, 18px);
+    transition: background 0.3s;
+}
 
+button:hover {
+    background-color: #2f3640;
+}
+
+/* Back button */
 .back-button {
     background: #40739e;
     color: #fff;
     border: none;
-    padding: 8px 15px;
+    padding: clamp(6px, 2vw, 8px) clamp(10px, 2.5vw, 15px);
     border-radius: 5px;
     cursor: pointer;
-    font-size: 14px;
-    margin-bottom: 15px;
+    font-size: clamp(14px, 2.5vw, 16px);
+    margin-bottom: clamp(10px, 2.5vw, 15px);
 }
 .back-button:hover {
     background: #2f5d7a;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/* Responsive container padding (small screens) */
+@media (max-width: 480px) {
+    .container {
+        padding: clamp(15px, 5vw, 20px);
+    }
+}
